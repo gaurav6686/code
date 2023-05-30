@@ -1,0 +1,53 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int keyMatrix[3][3] = {{0}};
+int messageVector[3][1] = {{0}};
+int cipherMatrix[3][1] = {{0}};
+
+void getKeyMatrix(const string& key) {
+    int k = 0;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            keyMatrix[i][j] = key[k] % 65;
+            ++k;
+        }
+    }
+}
+
+void encrypt() {
+    for (int i = 0; i < 3; ++i) {
+        cipherMatrix[i][0] = 0;
+        for (int x = 0; x < 3; ++x) {
+            cipherMatrix[i][0] += keyMatrix[i][x] * messageVector[x][0];
+        }
+        cipherMatrix[i][0] = cipherMatrix[i][0] % 26;
+    }
+}
+
+void HillCipher(const string& message, const string& key) {
+    getKeyMatrix(key);
+
+    for (int i = 0; i < 3; ++i) {
+        messageVector[i][0] = message[i] % 65;
+    }
+
+    encrypt();
+
+    string ciphertext;
+    for (int i = 0; i < 3; ++i) {
+        ciphertext += cipherMatrix[i][0] + 65;
+    }
+
+    cout << "Ciphertext: " << ciphertext << endl;
+}
+
+int main() {
+    string message = "ACT";
+    string key = "GYBNQKURP";
+
+    HillCipher(message, key);
+
+    return 0;
+}
