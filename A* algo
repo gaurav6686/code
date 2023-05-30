@@ -1,0 +1,112 @@
+#include <iostream>
+#include <unordered_map>
+#include <set>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Graph {
+public:
+    unordered_map<char, vector<pair<char, int>>> adjacency_list;
+
+    Graph(const unordered_map<char, vector<pair<char, int>>>& adj_list) : adjacency_list(adj_list) {}
+
+    vector<pair<char, int>> get_neighbors(char v) {
+        return adjacency_list[v];
+    }
+
+    int h(char n) {
+        unordered_map<char, int> H = {
+            {'A', 1},
+            {'B', 1},
+            {'C', 1},
+            {'D', 1}
+        };
+
+        return H[n];
+    }
+
+    vector<char> a_star_algorithm(char start_node, char stop_node) {
+        set<char> open_list;
+        set<char> closed_list;
+
+        open_list.insert(start_node);
+
+        unordered_map<char, int> g;
+        g[start_node] = 0;
+
+        unordered_map<char, char> parents;
+        parents[start_node] = start_node;
+
+        while (!open_list.empty()) {
+            char n = '\0';
+
+            for (const char& v : open_list) {
+                if (n == '\0' || g[v] + h(v) < g[n] + h(n)) {
+                    n = v;
+                }
+            }
+
+            if (n == '\0') {
+                cout << "Path does not exist!" << endl;
+                return vector<char>();
+            }
+
+            if (n == stop_node) {
+                vector<char> reconst_path;
+                while (parents[n] != n) {
+                    reconst_path.push_back(n);
+                    n = parents[n];
+                }
+                reconst_path.push_back(start_node);
+                reverse(reconst_path.begin(), reconst_path.end());
+                cout << "Path found: ";
+                for (const char& node : reconst_path) {
+                    cout << node << " ";
+                }
+                cout << endl;
+                return reconst_path;
+            }
+
+            for (const auto& neighbor : get_neighbors(n)) {
+                char m = neighbor.first;
+                int weight = neighbor.second;
+
+                if (open_list.find(m) == open_list.end() && closed_list.find(m) == closed_list.end()) {
+                    open_list.insert(m);
+                    parents[m] = n;
+                    g[m] = g[n] + weight;
+                } else {
+                    if (g[m] > g[n] + weight) {
+                        g[m] = g[n] + weight;
+                        parents[m] = n;
+                        if (closed_list.find(m) != closed_list.end()) {
+                            closed_list.erase(m);
+                            open_list.insert(m);
+                        }
+                    }
+                }
+            }
+
+            open_list.erase(n);
+            closed_list.insert(n);
+        }
+
+        cout << "Path does not exist!" << endl;
+        return vector<char>();
+    }
+};
+
+int main() {
+    unordered_map<char, vector<pair<char, int>>> adjacency_list = {
+        {'A', {{'B', 1}, {'C', 3}, {'D', 7}}},
+        {'B', {{'D', 5}}},
+        {'C', {{'D', 12}}}
+    };
+
+    Graph graph(adjacency_list);
+    vector<char> path = graph.a_star_algorithm('A', 'D');
+
+    return 0;
+}
