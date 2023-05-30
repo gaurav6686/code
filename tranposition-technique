@@ -1,0 +1,47 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+string encrypt(const string& plaintext, int key) {
+    string ciphertext;
+
+    int len = plaintext.length();
+    int numCols = (len + key - 1) / key;
+
+    for (int i = 0; i < numCols; ++i) {
+        for (int j = i; j < len; j += numCols) {
+            ciphertext += plaintext[j];
+        }
+    }
+
+    return ciphertext;
+}
+
+string decrypt(const string& ciphertext, int key) {
+    string plaintext;
+
+    int len = ciphertext.length();
+    int numRows = (len + key - 1) / key;
+
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = i; j < len; j += numRows) {
+            plaintext += ciphertext[j];
+        }
+    }
+
+    return plaintext;
+}
+
+int main() {
+    string plaintext = "Hello, World!";
+    int key = 3;
+
+    string ciphertext = encrypt(plaintext, key);
+    string decrypted_plaintext = decrypt(ciphertext, key);
+
+    cout << "Plaintext: " << plaintext << endl;
+    cout << "Ciphertext: " << ciphertext << endl;
+    cout << "Decrypted plaintext: " << decrypted_plaintext << endl;
+
+    return 0;
+}
