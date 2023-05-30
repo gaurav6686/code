@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int gcd(int a, int h) {
+    int temp;
+    while (true) {
+        temp = a % h;
+        if (temp == 0) {
+            return h;
+        }
+        a = h;
+        h = temp;
+    }
+}
+
+int main() {
+    int p = 3;
+    int q = 7;
+    int n = p * q;
+    int e = 2;
+    int phi = (p - 1) * (q - 1);
+
+    while (e < phi) {
+        if (gcd(e, phi) == 1) {
+            break;
+        } else {
+            e = e + 1;
+        }
+    }
+
+    int k = 2;
+    int d = (1 + (k * phi)) / e;
+
+    double msg = 12.0;
+
+    cout << "Message data = " << msg << endl;
+
+    double c = fmod(pow(msg, e), n);
+    cout << "Encrypted data = " << c << endl;
+
+    double m = fmod(pow(c, d), n);
+    cout << "Original Message Sent = " << m << endl;
+
+    return 0;
+}
